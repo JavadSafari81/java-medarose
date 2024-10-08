@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  panel-medarose:
+    container_name: panel-medarose
+    build: .
+      #working_dir: /app
+    restart: always
+    networks:
+      - app-network
+    volumes:
+      - ./app:/app
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.panel-medarose.rule=Host(`panel.arvan.medarose.ir`)"
+      - "traefik.http.routers.panel-medarose.entrypoints=web"
+      - "traefik.http.services.panel-medarose.loadbalancer.server.port=8080"
+      - "traefik.http.routers.panel-medarose.service=panel-medarose"
+      - "traefik.http.routers.panel-medarose-secure.entrypoints=websecure"
+      - "traefik.http.routers.panel-medarose-secure.tls.certresolver=myresolver"
+      - "traefik.http.routers.panel-medarose-secure.rule=Host(`panel.arvan.medarose.ir`)"
+      - "traefik.http.routers.panel-medarose-secure.service=panel-medarose"
+networks:
+  app-network:
+    external: true
